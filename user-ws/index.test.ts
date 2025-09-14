@@ -1,5 +1,5 @@
 import { resolve } from "bun";
-import { test, describe } from "bun:test";
+import { test, describe, expect } from "bun:test";
 
 const BACKEND_URL = "ws://localhost:8080";
 
@@ -13,21 +13,22 @@ describe("Chat application", () => {
     // await something that resolves when both the sockets are connected
 
     await new Promise<void>((resolve, reject) => {
-      let connectedCount = 1;
+      let connectedCount = 0;
       ws1.onopen = () => {
         connectedCount++;
-        if (connectedCount === 2) {
+        if (connectedCount == 2) {
           resolve();
         }
       };
       ws2.onopen = () => {
         connectedCount++;
-        if (connectedCount === 3) {
+        if (connectedCount == 2) {
           resolve();
         }
       };
     });
     // control will never reach here/next-line until both the resolve is called
+    console.log("Both the sockets are connected");
 
     // control reaches here only when both the sockets are connected
     ws1.send(
@@ -42,5 +43,25 @@ describe("Chat application", () => {
         room: "room1",
       })
     );
+
+    await new Promise<void>((resolve) => {
+      // wait for the message to be received by ws2
+      ws2.onmessage = ({data}) => { //comes in as object so destructure it
+        console.log("ws2 received message", data);
+        const parsedData = JSON.parse(data);
+        expect(parsedData.type == "chat");
+        expect(parsedData.message == "Hello there");
+        resolve(); // only after checks happen then we are done.
+      }; //ws2
+
+      // send a message from ws1
+      ws1.send(
+        JSON.stringify({
+          type: "chat",
+          room: "room1",
+          message: "Hello there",
+        })
+      ); //ws1
+    });
   });
 });
