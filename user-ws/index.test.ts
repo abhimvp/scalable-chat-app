@@ -46,7 +46,8 @@ describe("Chat application", () => {
 
     await new Promise<void>((resolve) => {
       // wait for the message to be received by ws2
-      ws2.onmessage = ({data}) => { //comes in as object so destructure it
+      ws2.onmessage = ({ data }) => {
+        //comes in as object so destructure it
         console.log("ws2 received message", data);
         const parsedData = JSON.parse(data);
         expect(parsedData.type == "chat");
