@@ -1,13 +1,14 @@
 import { resolve } from "bun";
 import { test, describe, expect } from "bun:test";
 
-const BACKEND_URL = "ws://localhost:8080";
+const BACKEND_URL1 = "ws://localhost:8080";
+const BACKEND_URL2 = "ws://localhost:8081";
 
 describe("Chat application", () => {
   test("Message send from room 1 reached another participant in room 1", async () => {
     // 2 clients ws1,ws2
-    const ws1 = new WebSocket(BACKEND_URL);
-    const ws2 = new WebSocket(BACKEND_URL);
+    const ws1 = new WebSocket(BACKEND_URL1);
+    const ws2 = new WebSocket(BACKEND_URL2);
     // until they are connected - we need to wait - promise assignment - make sure the sockets are connected
     // these callbacks will be called when the connection is established - to see someone if they know promises in js or not.
     // await something that resolves when both the sockets are connected
