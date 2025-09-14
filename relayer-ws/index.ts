@@ -12,12 +12,11 @@ wss.on("connection", function connection(ws) {
 
   //   whenever there is a new connection we do
   servers.push(ws);
-//   ws.on("message", function message(data: string) {
-//     servers
-//       .map(socket => {
-//         socket.send(data);
-//       });
-//   });
+  ws.on("message", function message(data: string) {
+    servers.map((socket) => {
+      socket.send(data);
+    });
+  });
 
-//   ws.send("something");
+  //   ws.send("something");
 });
